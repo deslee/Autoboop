@@ -118,16 +118,20 @@ export default ({ margin, width, height, requiredDelay }) => {
         {state.step}
     </div>;
 
-    return <div
-        ref={rootEl}
-        className="app"
-        onMouseMove={onMouseMove}
-        onMouseLeave={onMouseLeave}
-    >
-        <div>Boops: {state.boops}</div>
-        {state.step !== catSteps.CatDisplayed && box}
-        {state.step === catSteps.CatDisplayed && <React.Fragment>
-            <img src={`https://s3.amazonaws.com/9312d73d-977e-4e5f-952f-b92d4a26fe09-static/autoboop/${state.cat.Filepath}`} />
-        </React.Fragment>}
+    const score = state.boops ? <React.Fragment>You've booped {state.boops} times!</React.Fragment> : <React.Fragment>Boop some cats!</React.Fragment>
+
+    return <div>
+        <div>Author: <a href="https://le3.io" target="_blank" rel="noopener">le3.io</a> | {score}</div>
+        <div
+            ref={rootEl}
+            className="app"
+            onMouseMove={onMouseMove}
+            onMouseLeave={onMouseLeave}
+        >
+            {state.step !== catSteps.CatDisplayed && box}
+            {state.step === catSteps.CatDisplayed && <React.Fragment>
+                <img src={`https://s3.amazonaws.com/9312d73d-977e-4e5f-952f-b92d4a26fe09-static/autoboop/${state.cat.Filepath}`} />
+            </React.Fragment>}
+        </div>
     </div>;
 }
