@@ -1,0 +1,34 @@
+variables:
+  CONTAINER_IMAGE_BASE: registry.gitlab.com/$CI_PROJECT_PATH
+  DOCKER_HOST: tcp://docker:2375
+
+stages:
+  - build
+  - deploy
+
+build_app:
+  image: docker:stable
+  services:
+    - docker:dind
+  stage: build
+  script:
+    - docker info
+    - docker login -u gitlab-ci-token -p $CI_JOB_TOKEN registry.gitlab.com
+    - docker pull $CONTAINER_IMAGE_BASE/app:latest || true
+    - docker build --cache-from $CONTAINER_IMAGE_BASE/app:latest --tag $CONTAINER_IMAGE_BASE/app:$CI_COMMIT_SHA --tag $CONTAINER_IMAGE_BASE/app:latest ./
+    - docker push $CONTAINER_IMAGE_BASE/app:$CI_COMMIT_SHA
+    - docker push $CONTAINER_IMAGE_BASE/app:latest
+
+deploy_stage_app:
+  image: deslee/ubuntu-with-ssh:latest
+  stage: deploy
+  script:
+    - eval $(ssh-agent -s)
+    - echo "$SSH_PRIVATE_KEY" | tr -d '\r' | ssh-add - > /dev/null
+    - mkdir -p ~/.ssh
+    - chmod 700 ~/.ssh
+    - ssh -o StrictHostKeyChecking=no root@$SERVER_HOST sudo docker login -u gitlab-ci-token -p $CI_JOB_TOKEN registry.gitlab.com
+    - ssh -o StrictHostKeyChecking=no root@$SERVER_HOST sudo docker stop autoboop.com || true
+    - ssh -o StrictHostKeyChecking=no root@$SERVER_HOST sudo docker rm autoboop.com || true
+    - ssh -o StrictHostKeyChecking=no root@$SERVER_HOST sudo docker pull $CONTAINER_IMAGE_BASE/app:$CI_COMMIT_SHA
+    - ssh -o StrictHostKeyChecking=no root@$SERVER_HOST sudo docker run --restart unless-stopped -d --name autoboop.com -e 'LETSENCRYPT_HOST=autoboop.com' -e 'VIRTUAL_HOST=autoboop.com' $CONTAINER_IMAGE_BASE/app:$CI_COMMIT_SHA
