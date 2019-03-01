@@ -2,20 +2,27 @@
   "name": "catfinder",
   "version": "1.0.0",
   "description": "",
-  "main": "index.js",
+  "main": "FindCatByPosition.js",
   "scripts": {
-    "dev": "zero",
-    "build": "zero build",
-    "start": "NODE_ENV=production zero"
+    "dev": "node server.js",
+    "build": "next build",
+    "start": "NODE_ENV=production node server.js"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+ssh://git@gitlab.com/deslee/catfinder.git"
   },
   "author": "",
   "license": "ISC",
+  "bugs": {
+    "url": "https://gitlab.com/deslee/catfinder/issues"
+  },
+  "homepage": "https://gitlab.com/deslee/catfinder#readme",
   "dependencies": {
+    "next": "^8.0.3",
     "react": "^16.8.3",
+    "react-dom": "^16.8.3",
     "react-helmet": "^5.2.0",
     "sqlite3": "^4.0.6"
-  },
-  "devDependencies": {
-    "zero": "^1.0.9"
   }
 }

@@ -9,4 +9,5 @@ ENV NODE_ENV production
 ENV PORT 80
 EXPOSE 80
 
-CMD ["npm", "run", "start"]
+RUN npm install --quiet --no-progress --unsafe-perm -g zero
+CMD ["zero"]
