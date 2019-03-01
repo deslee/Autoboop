@@ -17,23 +17,27 @@ const actionTypes = {
 const initialState = {
     step: catSteps.PromptUserToMovePointer,
     position: undefined,
-    cat: undefined
+    cat: undefined,
+    boops: 0
 }
 
 function reducer(state, action) {
     switch (action.type) {
         case actionTypes.mouseMovedInBox:
             return {
-                step: catSteps.PromptUserToHoldStill
+                step: catSteps.PromptUserToHoldStill,
+                boops: state.boops
             }
         case actionTypes.mouseLeftBox:
             return {
-                step: catSteps.PromptUserToMovePointer
+                step: catSteps.PromptUserToMovePointer,
+                boops: state.boops
             }
         case actionTypes.mouseHeldStillOverThreshold:
             return {
                 step: catSteps.DisplayingCat,
-                position: action.position
+                position: action.position,
+                boops: state.boops
             }
         case actionTypes.receivedCatAndDisplaying:
             // are we still expecting a cat?
@@ -41,7 +45,8 @@ function reducer(state, action) {
                 return {
                     step: catSteps.CatDisplayed,
                     position: state.position,
-                    cat: action.cat
+                    cat: action.cat,
+                    boops: state.boops + 1
                 }
             }
         default:
@@ -119,7 +124,10 @@ export default ({ margin, width, height, requiredDelay }) => {
         onMouseMove={onMouseMove}
         onMouseLeave={onMouseLeave}
     >
+        <div>Boops: {state.boops}</div>
         {state.step !== catSteps.CatDisplayed && box}
-        {state.step === catSteps.CatDisplayed && <img src={`https://s3.amazonaws.com/9312d73d-977e-4e5f-952f-b92d4a26fe09-static/autoboop/${state.cat.Filepath}`} />}
+        {state.step === catSteps.CatDisplayed && <React.Fragment>
+            <img src={`https://s3.amazonaws.com/9312d73d-977e-4e5f-952f-b92d4a26fe09-static/autoboop/${state.cat.Filepath}`} />
+        </React.Fragment>}
     </div>;
 }
