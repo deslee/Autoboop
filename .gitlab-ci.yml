@@ -31,4 +31,4 @@ deploy_stage_app:
     - ssh -o StrictHostKeyChecking=no root@$SERVER_HOST sudo docker stop autoboop.com || true
     - ssh -o StrictHostKeyChecking=no root@$SERVER_HOST sudo docker rm autoboop.com || true
     - ssh -o StrictHostKeyChecking=no root@$SERVER_HOST sudo docker pull $CONTAINER_IMAGE_BASE/app:$CI_COMMIT_SHA
-    - ssh -o StrictHostKeyChecking=no root@$SERVER_HOST sudo docker run --restart unless-stopped -d --name autoboop.com -e 'LETSENCRYPT_HOST=autoboop.com' -e 'PORT=80' -e 'VIRTUAL_HOST=autoboop.com' $CONTAINER_IMAGE_BASE/app:$CI_COMMIT_SHA
+    - ssh -o StrictHostKeyChecking=no root@$SERVER_HOST sudo docker run --restart unless-stopped -d --name autoboop.com -e'LETSENCRYPT_EMAIL=desmondleepublic@gmail.com' -e 'LETSENCRYPT_HOST=autoboop.com' -e 'PORT=80' -e 'VIRTUAL_HOST=autoboop.com' $CONTAINER_IMAGE_BASE/app:$CI_COMMIT_SHA
