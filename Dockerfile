@@ -10,4 +10,4 @@ ENV PORT 80
 EXPOSE 80
 
 RUN npm install --quiet --no-progress --unsafe-perm -g zero
-CMD ["zero"]
+CMD ["npm", "run", "start"]
