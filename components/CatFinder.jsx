@@ -111,7 +111,6 @@ export default ({ margin, width, height, requiredDelay }) => {
         }}
     >
         {state.step}
-        {JSON.stringify(state.position)}
     </div>;
 
     return <div
