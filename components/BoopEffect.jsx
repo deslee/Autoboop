@@ -12,6 +12,7 @@ export default ({position}) => {
             font-size: 2rem;
             text-shadow: -1px 0 black, 0 1px black, 1px 0 black, 0 -1px black;
             animation-name: fade;
+            cursor: pointer;
             font-family: sans-serif;
             animation-duration: 2s;
             opacity: 0;
@@ -26,8 +27,8 @@ export default ({position}) => {
                 opacity: 0;
                 transform: translateY(-20px)
             }
-            50% {
-                opacity: 1;
+            20% {
+                opacity: .65;
             }
         }
     `}</style>
