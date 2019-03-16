@@ -1,17 +1,20 @@
 import React, { useState, useEffect, useRef, useReducer } from 'react';
+import BoopEffect from './BoopEffect';
 
 const catSteps = {
     PromptUserToMovePointer: "Move your cursor around in this box",
     PromptUserToHoldStill: "Hold still!",
-    DisplayingCat: "Here it comes...",
-    CatDisplayed: "Boop!"
+    RetrievingImage: "Here it comes...",
+    ShowingImage: "Showing...",
+    ImageLoaded: "Boop!",
 }
 
 const actionTypes = {
     mouseMovedInBox: 1,
     mouseLeftBox: 2,
     mouseHeldStillOverThreshold: 3,
-    receivedCatAndDisplaying: 4
+    receivedCatAndDisplaying: 4,
+    catImageLoaded: 5,
 }
 
 const initialState = {
@@ -35,19 +38,26 @@ function reducer(state, action) {
             }
         case actionTypes.mouseHeldStillOverThreshold:
             return {
-                step: catSteps.DisplayingCat,
+                step: catSteps.RetrievingImage,
                 position: action.position,
                 boops: state.boops
             }
         case actionTypes.receivedCatAndDisplaying:
             // are we still expecting a cat?
-            if (state.step === catSteps.DisplayingCat) {
+            if (state.step === catSteps.RetrievingImage) {
                 return {
-                    step: catSteps.CatDisplayed,
+                    step: catSteps.ShowingImage,
                     position: state.position,
                     cat: action.cat,
                     boops: state.boops + 1
                 }
+            } else {
+                return state;
+            }
+        case actionTypes.catImageLoaded:
+            return {
+                ...state,
+                step: catSteps.ImageLoaded
             }
         default:
             return state
@@ -103,6 +113,10 @@ export default ({ margin, width, height, requiredDelay }) => {
         dispatch({ type: actionTypes.mouseLeftBox })
     }
 
+    const imageLoaded = (e) => {
+        dispatch({ type: actionTypes.catImageLoaded })
+    }
+
     const box = <div
         style={{
             margin,
@@ -128,9 +142,18 @@ export default ({ margin, width, height, requiredDelay }) => {
             onMouseMove={onMouseMove}
             onMouseLeave={onMouseLeave}
         >
-            {state.step !== catSteps.CatDisplayed && box}
-            {state.step === catSteps.CatDisplayed && <React.Fragment>
-                <img src={`https://s3.amazonaws.com/9312d73d-977e-4e5f-952f-b92d4a26fe09-static/autoboop/${state.cat.Filepath}`} />
+            {(state.step !== catSteps.ShowingImage) && (state.step !== catSteps.ImageLoaded) && box}
+            {(state.step === catSteps.ShowingImage || state.step === catSteps.ImageLoaded) && <React.Fragment>
+                <img 
+                    src={`https://s3.amazonaws.com/9312d73d-977e-4e5f-952f-b92d4a26fe09-static/autoboop/${state.cat.Filepath}`} 
+                    onLoad={imageLoaded}
+                />
+            </React.Fragment>}
+            {state.step === catSteps.ImageLoaded && <React.Fragment>
+                <BoopEffect
+                    fileName={state.cat.FilePath}
+                    position={state.position}
+                />
             </React.Fragment>}
         </div>
     </div>;
