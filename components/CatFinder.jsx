@@ -148,6 +148,7 @@ export default ({ margin, width, height, requiredDelay }) => {
         <style jsx>{`
             .app {
                 overflow: hidden;
+                cursor: pointer;
             }
         `}</style>
         <div>Author: <a href="https://le3.io" target="_blank" rel="noopener">le3.io</a> | {score}</div>
@@ -163,7 +164,6 @@ export default ({ margin, width, height, requiredDelay }) => {
                     src={`https://s3.amazonaws.com/9312d73d-977e-4e5f-952f-b92d4a26fe09-static/autoboop/${state.cat.Filepath}`}
                     onLoad={onImageLoad}
                     style={state.step === catSteps.ImageLoaded ? {
-
                     } : {
                         visibility: 'hidden',
                         position: 'absolute',
