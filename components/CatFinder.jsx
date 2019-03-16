@@ -1,12 +1,20 @@
-import React, { useState, useEffect, useRef, useReducer } from 'react';
+import React, { useState, useRef, useReducer } from 'react';
 import BoopEffect from './BoopEffect';
 
 const catSteps = {
-    PromptUserToMovePointer: "Move your cursor around in this box",
-    PromptUserToHoldStill: "Hold still!",
-    RetrievingImage: "Here it comes...",
-    ShowingImage: "Showing...",
-    ImageLoaded: "Boop!",
+    PromptUserToMovePointer: 1,
+    PromptUserToHoldStill: 2,
+    RetrievingImage: 3,
+    ShowingImage: 4,
+    ImageLoaded: 5,
+}
+
+const catStepsMessage = {
+    [catSteps.PromptUserToMovePointer]: "Move your cursor around in this box",
+    [catSteps.PromptUserToHoldStill]: "Hold still!",
+    [catSteps.RetrievingImage]: "Here it comes...",
+    [catSteps.ShowingImage]: "Here it comes...",
+    [catSteps.ImageLoaded]: "Boop!",
 }
 
 const actionTypes = {
@@ -113,7 +121,7 @@ export default ({ margin, width, height, requiredDelay }) => {
         dispatch({ type: actionTypes.mouseLeftBox })
     }
 
-    const imageLoaded = (e) => {
+    const onImageLoad = () => {
         dispatch({ type: actionTypes.catImageLoaded })
     }
 
@@ -129,8 +137,10 @@ export default ({ margin, width, height, requiredDelay }) => {
             background: 'white'
         }}
     >
-        {state.step}
+        {catStepsMessage[state.step]}
     </div>;
+
+    const isRetrievingPosition = !(state.step === catSteps.ShowingImage || state.step === catSteps.ImageLoaded)
 
     const score = state.boops ? <React.Fragment>You've booped {state.boops} times!</React.Fragment> : <React.Fragment>Boop some cats!</React.Fragment>
 
@@ -142,18 +152,18 @@ export default ({ margin, width, height, requiredDelay }) => {
             onMouseMove={onMouseMove}
             onMouseLeave={onMouseLeave}
         >
-            {(state.step !== catSteps.ShowingImage) && (state.step !== catSteps.ImageLoaded) && box}
-            {(state.step === catSteps.ShowingImage || state.step === catSteps.ImageLoaded) && <React.Fragment>
-                <img 
-                    src={`https://s3.amazonaws.com/9312d73d-977e-4e5f-952f-b92d4a26fe09-static/autoboop/${state.cat.Filepath}`} 
-                    onLoad={imageLoaded}
+            {state.step !== catSteps.ImageLoaded && box}
+            {!isRetrievingPosition && <React.Fragment>
+                <img
+                    src={`https://s3.amazonaws.com/9312d73d-977e-4e5f-952f-b92d4a26fe09-static/autoboop/${state.cat.Filepath}`}
+                    onLoad={onImageLoad}
+                    style={{
+                        visibility: state.step === catSteps.ImageLoaded ? 'visible' : 'hidden'
+                    }}
                 />
-            </React.Fragment>}
-            {state.step === catSteps.ImageLoaded && <React.Fragment>
-                <BoopEffect
-                    fileName={state.cat.FilePath}
+                {state.step === catSteps.ImageLoaded && <BoopEffect
                     position={state.position}
-                />
+                />}
             </React.Fragment>}
         </div>
     </div>;

@@ -1,10 +1,8 @@
-import React, { useEffect } from 'react';
+import React from 'react';
 
-export default ({fileName, position}) => {
-    console.log(position)
-
+export default ({position}) => {
     return <div style={{
-        top: position.y,
+        top: position.y-10,
         left: position.x,
     }}>
     <style jsx>{`}
