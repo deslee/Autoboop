@@ -5,7 +5,7 @@ export default ({position}) => {
         top: position.y-10,
         left: position.x,
     }}>
-    <style jsx>{`}
+    <style jsx>{`
         div {
             position: absolute;
             color: white;
