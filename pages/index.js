@@ -15,10 +15,7 @@ export default class extends React.Component {
                 }
             `}</style>
             <CatFinder
-                margin={50}
-                width={600}
-                height={500}
-                requiredDelay={500}
+                requiredDelay={200}
             />
         </React.Fragment>
     }

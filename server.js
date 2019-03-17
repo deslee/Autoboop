@@ -16,8 +16,8 @@ const FindCatByPosition = (req, res) => {
     const { pathname, query } = parsedUrl
 
     const sql = `SELECT c.* FROM Cats as c 
-    WHERE c.MouthX IS NOT NULL AND c.MouthY IS NOT NULL
-    ORDER BY abs(c.MouthX - ?) + abs(c.MouthY - ?)
+    WHERE c.MouthHorizontalPercentage IS NOT NULL AND c.MouthVerticalPercentage IS NOT NULL
+    ORDER BY abs(c.MouthHorizontalPercentage - ?) + abs(c.MouthVerticalPercentage - ?)
     LIMIT 1
     `
 

@@ -22,11 +22,13 @@ export const initialState = {
 }
 
 export function reducer(state, action) {
+    console.log(action)
     switch (action.type) {
         case actionTypes.mouseMovedInBox:
             return {
                 step: catSteps.PromptUserToHoldStill,
-                boops: state.boops
+                boops: state.boops,
+                position: action.position
             }
         case actionTypes.mouseLeftBox:
             return {
@@ -60,3 +62,5 @@ export function reducer(state, action) {
             return state
     }
 }
+
+export const isRetrievingPosition = state => !(state.step === catSteps.ShowingImage || state.step === catSteps.ImageLoaded)

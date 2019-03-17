@@ -1,5 +1,6 @@
-import React, { useState, useRef, useReducer } from 'react';
-import { reducer, catSteps, actionTypes, initialState } from './State';
+import React, { Fragment, useState, useRef, useReducer } from 'react';
+import { reducer, catSteps, actionTypes, initialState, isRetrievingPosition } from './State';
+import classNames from 'classnames';
 import BoopEffect from './BoopEffect';
 
 const catStepsMessage = {
@@ -7,14 +8,13 @@ const catStepsMessage = {
     [catSteps.PromptUserToHoldStill]: "Hold still!",
     [catSteps.RetrievingImage]: "Here it comes...",
     [catSteps.ShowingImage]: "Here it comes...",
-    [catSteps.ImageLoaded]: "Boop!",
+    [catSteps.ImageLoaded]: "",
 }
 
-export default ({ margin, width, height, requiredDelay }) => {
+export default ({ requiredDelay }) => {
     const [state, dispatch] = useReducer(reducer, initialState)
     const [timeoutHandles, setTimeoutHandles] = useState({})
     const rootEl = useRef()
-
 
     const getCatForPosition = async (x, y) => {
         const response = await fetch(`/FindCatByPosition?x=${x}&y=${y}`)
@@ -31,22 +31,21 @@ export default ({ margin, width, height, requiredDelay }) => {
             ...timeoutHandles,
             waitOnMouseTimeout: undefined
         })
-        var rect = rootEl.current.getBoundingClientRect();
-        var x = e.clientX - rect.left; //x position within the element.
-        var y = e.clientY - rect.top;  //y position within the element.
-        if (x - margin > 0 && y - margin > 0 && x - margin < width && y - margin < height) {
-            dispatch({ type: actionTypes.mouseMovedInBox })
-            // update timeouts
-            setTimeoutHandles({
-                ...timeoutHandles,
-                waitOnMouseTimeout: setTimeout(() => {
-                    dispatch({ type: actionTypes.mouseHeldStillOverThreshold, position: { x, y } })
-                    getCatForPosition(x, y)
-                }, requiredDelay)
-            })
-        } else {
-            dispatch({ type: actionTypes.mouseLeftBox })
-        }
+        const rect = rootEl.current.getBoundingClientRect();
+        console.log(rect)
+        const xPos = e.clientX - rect.left; //x position within the element.
+        const yPos = e.clientY - rect.top;  //y position within the element.
+        const xPerc = Math.round(xPos / rect.width * 100);
+        const yPerc = Math.round(yPos / rect.height * 100);
+        dispatch({ type: actionTypes.mouseMovedInBox, position: { x: xPerc, y: yPerc } })
+        // update timeouts
+        setTimeoutHandles({
+            ...timeoutHandles,
+            waitOnMouseTimeout: setTimeout(() => {
+                dispatch({ type: actionTypes.mouseHeldStillOverThreshold, position: { x: xPerc, y: yPerc } })
+                getCatForPosition(xPerc, yPerc)
+            }, requiredDelay)
+        })
     }
 
     const onMouseLeave = () => {
@@ -63,56 +62,59 @@ export default ({ margin, width, height, requiredDelay }) => {
         dispatch({ type: actionTypes.catImageLoaded })
     }
 
-    const box = <div
-        style={{
-            margin,
-            padding: '1rem',
-            boxSizing: 'border-box',
-            width,
-            height,
-            color: 'black',
-            border: '1px dashed grey',
-            background: 'white',
-            cursor: 'pointer'
-        }}
-    >
-        {catStepsMessage[state.step]}
-    </div>;
-
-    const isRetrievingPosition = !(state.step === catSteps.ShowingImage || state.step === catSteps.ImageLoaded)
-
-    const score = state.boops ? <React.Fragment>You've booped {state.boops} times!</React.Fragment> : <React.Fragment>Boop some cats!</React.Fragment>
-
-    return <div>
+    return <Fragment>
         <style jsx>{`
-            .app {
+            .catFinder {
+                width: 100vw;
+                height: 100vh;
+                padding: 2rem;
+                box-sizing: border-box;
+                display: flex;
+                align-items: center;
+                justify-content: center;
+                font-size: 3rem;
+            }
+            .isRetrievingPosition .activeArea {
+                background: lightgrey;
+            }
+            .catContainer {
+                position: absolute;
+                top: 0;
+                left: 0;
+                display: flex;
+                justify-content: center;
+                align-items: center;
                 overflow: hidden;
+                width: 100%;
+                height: 100%;
+            }
+            .catContainer img {
+                flex-shrink: 0;
+                min-width: 100%;
+                min-height: 100%;
             }
         `}</style>
-        <div>Author: <a href="https://le3.io" target="_blank" rel="noopener">le3.io</a> | {score}</div>
         <div
+            className={classNames({
+                catFinder: true,
+                isRetrievingPosition: isRetrievingPosition(state)
+            })}
             ref={rootEl}
-            className="app"
-            onMouseMove={onMouseMove}
             onMouseLeave={onMouseLeave}
+            onMouseMove={onMouseMove}
         >
-            {state.step !== catSteps.ImageLoaded && box}
-            {!isRetrievingPosition && <React.Fragment>
+            {catStepsMessage[state.step]}
+            {!isRetrievingPosition(state) && <div className="catContainer">
                 <img
                     src={`https://s3.amazonaws.com/9312d73d-977e-4e5f-952f-b92d4a26fe09-static/autoboop/${state.cat.Filepath}`}
                     onLoad={onImageLoad}
-                    style={state.step === catSteps.ImageLoaded ? {
-                        cursor: 'pointer'
-                    } : {
-                        visibility: 'hidden',
-                        position: 'absolute',
-                        top: '0'
+                    style={{
                     }}
                 />
                 {state.step === catSteps.ImageLoaded && <BoopEffect
                     position={state.position}
                 />}
-            </React.Fragment>}
+            </div>}
         </div>
-    </div>;
+    </Fragment>;
 }
