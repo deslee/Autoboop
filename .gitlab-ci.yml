@@ -7,6 +7,8 @@ stages:
   - deploy
 
 build_app:
+  only:
+    - master
   image: docker:stable
   services:
     - docker:dind
@@ -20,6 +22,8 @@ build_app:
     - docker push $CONTAINER_IMAGE_BASE/app:latest
 
 deploy_stage_app:
+  only:
+    - master
   image: deslee/ubuntu-with-ssh:latest
   stage: deploy
   script:
