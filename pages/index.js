@@ -1,5 +1,5 @@
 import { Helmet } from "react-helmet";
-import CatFinder from '../components/CatFinder'
+import CatFinder from '../components/CatFinder/CatFinder'
 
 export default class extends React.Component {
     render() {

@@ -1,13 +1,6 @@
 import React, { useState, useRef, useReducer } from 'react';
+import { reducer, catSteps, actionTypes, initialState } from './State';
 import BoopEffect from './BoopEffect';
-
-const catSteps = {
-    PromptUserToMovePointer: 1,
-    PromptUserToHoldStill: 2,
-    RetrievingImage: 3,
-    ShowingImage: 4,
-    ImageLoaded: 5,
-}
 
 const catStepsMessage = {
     [catSteps.PromptUserToMovePointer]: "Move your cursor around in this box",
@@ -15,61 +8,6 @@ const catStepsMessage = {
     [catSteps.RetrievingImage]: "Here it comes...",
     [catSteps.ShowingImage]: "Here it comes...",
     [catSteps.ImageLoaded]: "Boop!",
-}
-
-const actionTypes = {
-    mouseMovedInBox: 1,
-    mouseLeftBox: 2,
-    mouseHeldStillOverThreshold: 3,
-    receivedCatAndDisplaying: 4,
-    catImageLoaded: 5,
-}
-
-const initialState = {
-    step: catSteps.PromptUserToMovePointer,
-    position: undefined,
-    cat: undefined,
-    boops: 0
-}
-
-function reducer(state, action) {
-    switch (action.type) {
-        case actionTypes.mouseMovedInBox:
-            return {
-                step: catSteps.PromptUserToHoldStill,
-                boops: state.boops
-            }
-        case actionTypes.mouseLeftBox:
-            return {
-                step: catSteps.PromptUserToMovePointer,
-                boops: state.boops
-            }
-        case actionTypes.mouseHeldStillOverThreshold:
-            return {
-                step: catSteps.RetrievingImage,
-                position: action.position,
-                boops: state.boops
-            }
-        case actionTypes.receivedCatAndDisplaying:
-            // are we still expecting a cat?
-            if (state.step === catSteps.RetrievingImage) {
-                return {
-                    step: catSteps.ShowingImage,
-                    position: state.position,
-                    cat: action.cat,
-                    boops: state.boops + 1
-                }
-            } else {
-                return state;
-            }
-        case actionTypes.catImageLoaded:
-            return {
-                ...state,
-                step: catSteps.ImageLoaded
-            }
-        default:
-            return state
-    }
 }
 
 export default ({ margin, width, height, requiredDelay }) => {
