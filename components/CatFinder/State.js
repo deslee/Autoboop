@@ -22,7 +22,6 @@ export const initialState = {
 }
 
 export function reducer(state, action) {
-    console.log(action)
     switch (action.type) {
         case actionTypes.mouseMovedInBox:
             return {

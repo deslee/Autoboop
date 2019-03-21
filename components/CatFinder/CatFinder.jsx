@@ -1,7 +1,6 @@
 import React, { Fragment, useState, useRef, useReducer } from 'react';
 import { reducer, catSteps, actionTypes, initialState, isRetrievingPosition } from './State';
 import classNames from 'classnames';
-import BoopEffect from './BoopEffect';
 import Cat from './Cat';
 import Status from './Status';
 
@@ -45,22 +44,18 @@ export default ({ requiredDelay, isMobile }) => {
     }
 
     const onMouseMove = (e) => {
-        clearWaitOnMouseTimeout();
-        const rect = rootEl.current.getBoundingClientRect();
-        const xPos = e.clientX - rect.left; //x position within the element.
-        const yPos = e.clientY - rect.top;  //y position within the element.
-        const xPerc = Math.round(xPos / rect.width * 100);
-        const yPerc = Math.round(yPos / rect.height * 100);
-        const position = { xPerc, yPerc, xPos, yPos };
-        dispatch({ type: actionTypes.mouseMovedInBox, position })
-        setWaitOnMouseTimeout(position)
+        dispatchActivity(e.clientX, e.clientY)
     }
 
     const onTouchStart = (e) => {
+        dispatchActivity(e.touches[0].clientX, e.touches[0].clientY)
+    }
+
+    const dispatchActivity = (x, y) => {
         clearWaitOnMouseTimeout();
         const rect = rootEl.current.getBoundingClientRect();
-        const xPos = e.touches[0].clientX - rect.left; //x position within the element.
-        const yPos = e.touches[0].clientY - rect.top;  //y position within the element.
+        const xPos = x - rect.left; //x position within the element.
+        const yPos = y - rect.top;  //y position within the element.
         const xPerc = Math.round(xPos / rect.width * 100);
         const yPerc = Math.round(yPos / rect.height * 100);
         const position = { xPerc, yPerc, xPos, yPos };
@@ -111,14 +106,10 @@ export default ({ requiredDelay, isMobile }) => {
                 justify-content: center;
                 font-size: 3rem;
             }
-            .isRetrievingPosition .activeArea {
-                background: lightgrey;
-            }
         `}</style>
         <div
             className={classNames({
-                catFinder: true,
-                isRetrievingPosition: isRetrievingPosition(state)
+                catFinder: true
             })}
             ref={rootEl}
             onMouseLeave={onMouseLeave}
@@ -126,11 +117,11 @@ export default ({ requiredDelay, isMobile }) => {
             onTouchStart={isMobile ? onTouchStart : undefined}
         >
             {isRetrievingPosition(state) && catStepsMessage[state.step]}
-            {!isRetrievingPosition(state) && <Cat 
+            {!isRetrievingPosition(state) && <Cat
                 src={`https://s3.amazonaws.com/9312d73d-977e-4e5f-952f-b92d4a26fe09-static/autoboop/${state.cat.Filepath}`}
                 onImageLoad={onImageLoad}
-                {...calculateImageDimensions()
-            } />}
+                {...calculateImageDimensions()}
+            />}
         </div>
         <Status times={state.boops} />
     </Fragment>;

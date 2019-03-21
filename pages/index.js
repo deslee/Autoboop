@@ -1,4 +1,4 @@
-import { Helmet } from "react-helmet";
+import Head from "next/head";
 import CatFinder from '../components/CatFinder/CatFinder'
 
 export default class extends React.Component {
@@ -6,10 +6,11 @@ export default class extends React.Component {
         const isMobile = process.browser && 'ontouchstart' in document.documentElement
 
         return <React.Fragment>
-            <Helmet>
+            <Head>
                 <meta charSet="utf-8" />
-                <title>AutoBooper</title>
-            </Helmet>
+                <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+                <title>Autoboop</title>
+            </Head>
             <style global jsx>{`
                 * {
                     margin: 0;
