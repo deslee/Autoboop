@@ -1,4 +1,4 @@
-import React, { Fragment, useState, useRef, useReducer } from 'react';
+import React from 'react';
 
 export default ({ times }) => {
     const message = times > 0 ? `You've booped ${times} times!` : 'Boop some cats!'

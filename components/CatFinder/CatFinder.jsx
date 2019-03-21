@@ -3,6 +3,7 @@ import { reducer, catSteps, actionTypes, initialState, isRetrievingPosition } fr
 import classNames from 'classnames';
 import Cat from './Cat';
 import Status from './Status';
+import Crosshairs from './Crosshairs';
 
 export default ({ requiredDelay, isMobile }) => {
     const [state, dispatch] = useReducer(reducer, initialState)
@@ -171,5 +172,6 @@ export default ({ requiredDelay, isMobile }) => {
         {nudge && <span className="nudge">
             {nudgeMessage}
         </span>}
+        { isMobile && state.position && state.step !== catSteps.ImageLoaded && <Crosshairs x={state.position.xPos} y={state.position.yPos} /> }
     </Fragment>;
 }
