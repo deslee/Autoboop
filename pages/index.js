@@ -17,7 +17,7 @@ export default class extends React.Component {
                 }
             `}</style>
             <CatFinder
-                requiredDelay={200}
+                requiredDelay={500}
                 isMobile={isMobile}
             />
         </React.Fragment>

@@ -3,6 +3,7 @@ import { reducer, catSteps, actionTypes, initialState, isRetrievingPosition } fr
 import classNames from 'classnames';
 import BoopEffect from './BoopEffect';
 import Cat from './Cat';
+import Status from './Status';
 
 export default ({ requiredDelay, isMobile }) => {
     const [state, dispatch] = useReducer(reducer, initialState)
@@ -131,5 +132,6 @@ export default ({ requiredDelay, isMobile }) => {
                 {...calculateImageDimensions()
             } />}
         </div>
+        <Status times={state.boops} />
     </Fragment>;
 }

@@ -22,6 +22,7 @@ export const initialState = {
 }
 
 export function reducer(state, action) {
+    console.log(action)
     switch (action.type) {
         case actionTypes.mouseMovedInBox:
             return {
@@ -47,7 +48,7 @@ export function reducer(state, action) {
                     step: catSteps.ShowingImage,
                     position: state.position,
                     cat: action.cat,
-                    boops: state.boops + 1
+                    boops: state.boops
                 }
             } else {
                 return state;
@@ -55,7 +56,8 @@ export function reducer(state, action) {
         case actionTypes.catImageLoaded:
             return {
                 ...state,
-                step: catSteps.ImageLoaded
+                step: catSteps.ImageLoaded,
+                boops: state.boops + 1
             }
         default:
             return state

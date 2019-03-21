@@ -18,14 +18,14 @@ const FindCatByPosition = (req, res) => {
     const sql = `SELECT c.* FROM Cats as c 
     WHERE c.MouthHorizontalPercentage IS NOT NULL AND c.MouthVerticalPercentage IS NOT NULL
     ORDER BY abs(c.MouthHorizontalPercentage - ?) + abs(c.MouthVerticalPercentage - ?)
-    LIMIT 1
+    LIMIT 10
     `
 
     db.all(sql, [
         query.x, query.y
     ], (err, rows) => {
         res.writeHead(200, { 'Content-Type': 'application/json' })
-        res.end(JSON.stringify(rows[0]))
+        res.end(JSON.stringify(rows[Math.floor(Math.random() * rows.length)]))
     })
 }
 
