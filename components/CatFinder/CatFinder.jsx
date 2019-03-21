@@ -11,14 +11,14 @@ export default ({ requiredDelay, isMobile }) => {
     const rootEl = useRef()
 
     const catStepsMessage = {
-        [catSteps.PromptUserToMovePointer]: !isMobile ? "Move your cursor around in this box" : "Tap inside this box",
-        [catSteps.PromptUserToHoldStill]: !isMobile ? "Finding pointer... Hold still!" : "Hold still!",
+        [catSteps.PromptUserToMovePointer]: !isMobile ? "Move your cursor around" : "Tap anywhere",
+        [catSteps.PromptUserToHoldStill]: !isMobile ? "Detecting pointer... Hold still!" : "Hold still!",
         [catSteps.RetrievingImage]: "Here it comes...",
         [catSteps.ShowingImage]: "Here it comes...",
         [catSteps.ImageLoaded]: "",
     }
 
-    const nudgeMessage = !isMobile ? 'Keep it up! Move your cursor around' : 'Keep it up! Keep tapping!'
+    const nudgeMessage = !isMobile ? 'Keep it up! Move your cursor around' : 'Keep it up! Tap anywhere!'
 
     const setNudgeTimeout = () => {
         setTimeoutHandles({
@@ -133,7 +133,7 @@ export default ({ requiredDelay, isMobile }) => {
                 font-size: 3rem;
             }
             .nudge {
-                position: fixed;
+                position: absolute;
                 bottom: 0;
                 font-size: 2rem;
                 right: 0;

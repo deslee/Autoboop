@@ -5,7 +5,7 @@ export default ({ times }) => {
     return <div>
         <style jsx>{`
         div {
-            position: fixed;
+            position: absolute;
             top: 0;
             left: 0;
             color: black;

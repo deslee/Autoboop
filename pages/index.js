@@ -21,11 +21,20 @@ export default class extends React.Component {
                 div#__next {
                   height: 100%;
                 }
+
+                .app {
+                    width: 100%;
+                    height: 100%;
+                    overflow: hidden;
+                    position: relative;
+                }
             `}</style>
-            <CatFinder
-                requiredDelay={800}
-                isMobile={isMobile}
-            />
+            <div className="app">
+                <CatFinder
+                    requiredDelay={800}
+                    isMobile={isMobile}
+                />
+            </div>
         </React.Fragment>
     }
 }
