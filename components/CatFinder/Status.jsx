@@ -1,4 +1,5 @@
 import React from 'react';
+import captureOutboundLink from '../../util/captureOutboundLink';
 
 export default ({ times }) => {
     const message = times > 0 ? `You've booped ${times} times!` : 'Boop some cats!'
@@ -13,6 +14,6 @@ export default ({ times }) => {
             padding: .5rem;
         }
         `}</style>
-        Author: <a href="https://le3.io" target="_blank" rel="noopener">le3.io</a> | {message}
+        Author: <a href="https://le3.io" onClick={e => captureOutboundLink(e.target.href)} target="_blank" rel="noopener">le3.io</a> | {message}
     </div>
 }

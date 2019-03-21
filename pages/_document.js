@@ -12,9 +12,9 @@ export default class extends Document {
         return {
             __html: `
                 window.dataLayer = window.dataLayer || [];
-                function gtag(){dataLayer.push(arguments);}
+                function gtag(){ dataLayer.push(arguments); }
                 gtag('js', new Date());
-                gtag('config', 'UA-69448796-4');
+                gtag('config', 'UA-69448796-4', { 'transport_type': 'beacon' });
             `
         };
     }
@@ -28,7 +28,7 @@ export default class extends Document {
                     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
                     <link rel='shortcut icon' type='image/x-icon' href='/static/favicon.ico' />
 
-                    
+
                     <meta property="og:url" content="https://autoboop.com/" />
                     <meta property="og:image" content="https://autoboop.com/static/tina.jpg" />
                     <meta property="og:title" content="Autoboop" />

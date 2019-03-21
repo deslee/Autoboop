@@ -1,4 +1,4 @@
-import React, { Fragment, useState, useRef, useReducer } from 'react';
+import React, { Fragment, useState, useRef, useReducer, useEffect } from 'react';
 import { reducer, catSteps, actionTypes, initialState, isRetrievingPosition } from './State';
 import classNames from 'classnames';
 import Cat from './Cat';
@@ -18,6 +18,27 @@ export default ({ requiredDelay, isMobile }) => {
         [catSteps.ShowingImage]: "Here it comes...",
         [catSteps.ImageLoaded]: "",
     }
+
+    const onUnload = () => {
+        try {
+            window.gtag('event', 'onLeave', {
+                'event_category': 'boops',
+                'event_label': state.boops + 1,
+                'transport_type': 'beacon'
+            });
+        } catch (err) {
+            console.error(err)
+        }
+        return false;
+    }
+
+    useEffect(() => {
+        window.addEventListener('unload', onUnload, { passive: true })
+
+        return () => {
+            window.removeEventListener('unload', onUnload, { passive: true })
+        }
+    })
 
     const nudgeMessage = !isMobile ? 'Keep it up! Move your cursor around' : 'Keep it up! Tap anywhere!'
 
