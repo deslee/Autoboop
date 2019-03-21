@@ -3,6 +3,8 @@ import CatFinder from '../components/CatFinder/CatFinder'
 
 export default class extends React.Component {
     render() {
+        const isMobile = process.browser && 'ontouchstart' in document.documentElement
+
         return <React.Fragment>
             <Helmet>
                 <meta charSet="utf-8" />
@@ -16,6 +18,7 @@ export default class extends React.Component {
             `}</style>
             <CatFinder
                 requiredDelay={200}
+                isMobile={isMobile}
             />
         </React.Fragment>
     }

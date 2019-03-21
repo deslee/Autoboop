@@ -1,9 +1,9 @@
 import React from 'react';
 
-export default ({position}) => {
+export default ({ x, y }) => {
     return <div style={{
-        top: position.y-10,
-        left: position.x,
+        top: y,
+        left: x,
     }}>
     <style jsx>{`
         div {
@@ -32,6 +32,6 @@ export default ({position}) => {
             }
         }
     `}</style>
-    boop!
+        boop!
     </div>
 }

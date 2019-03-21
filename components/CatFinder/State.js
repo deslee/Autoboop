@@ -7,11 +7,11 @@ export const catSteps = {
 }
 
 export const actionTypes = {
-    mouseMovedInBox: 1,
-    mouseLeftBox: 2,
-    mouseHeldStillOverThreshold: 3,
-    receivedCatAndDisplaying: 4,
-    catImageLoaded: 5,
+    mouseMovedInBox: 'mouseMovedInBox',
+    mouseLeftBox: 'mouseLeftBox',
+    mouseHeldStillOverThreshold: 'mouseHeldStillOverThreshold',
+    receivedCatAndDisplaying: 'receivedCatAndDisplaying',
+    catImageLoaded: 'catImageLoaded',
 }
 
 export const initialState = {
@@ -22,7 +22,6 @@ export const initialState = {
 }
 
 export function reducer(state, action) {
-    console.log(action)
     switch (action.type) {
         case actionTypes.mouseMovedInBox:
             return {
@@ -38,7 +37,7 @@ export function reducer(state, action) {
         case actionTypes.mouseHeldStillOverThreshold:
             return {
                 step: catSteps.RetrievingImage,
-                position: action.position,
+                position: state.position,
                 boops: state.boops
             }
         case actionTypes.receivedCatAndDisplaying:
