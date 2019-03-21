@@ -18,7 +18,7 @@ export const initialState = {
     step: catSteps.PromptUserToMovePointer,
     position: undefined,
     cat: undefined,
-    boops: 0
+    boops: process.browser && Number(localStorage.getItem('boops')) || 0
 }
 
 export function reducer(state, action) {
@@ -53,6 +53,9 @@ export function reducer(state, action) {
                 return state;
             }
         case actionTypes.catImageLoaded:
+            if (process.browser) {
+                localStorage.setItem('boops', String(state.boops + 1))
+            }
             return {
                 ...state,
                 step: catSteps.ImageLoaded,

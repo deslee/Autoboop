@@ -12,21 +12,21 @@ const handle = app.getRequestHandler()
 const sqlite3 = require('sqlite3')
 const db = new sqlite3.Database('./data.db')
 const FindCatByPosition = (req, res) => {
-    const parsedUrl = parse(req.url, true)
-    const { pathname, query } = parsedUrl
+  const parsedUrl = parse(req.url, true)
+  const { pathname, query } = parsedUrl
 
-    const sql = `SELECT c.* FROM Cats as c 
+  const sql = `SELECT c.* FROM Cats as c 
     WHERE c.MouthHorizontalPercentage IS NOT NULL AND c.MouthVerticalPercentage IS NOT NULL
     ORDER BY abs(c.MouthHorizontalPercentage - ?) + abs(c.MouthVerticalPercentage - ?)
     LIMIT 10
     `
 
-    db.all(sql, [
-        query.x, query.y
-    ], (err, rows) => {
-        res.writeHead(200, { 'Content-Type': 'application/json' })
-        res.end(JSON.stringify(rows[Math.floor(Math.random() * rows.length)]))
-    })
+  db.all(sql, [
+    query.x, query.y
+  ], (err, rows) => {
+    res.writeHead(200, { 'Content-Type': 'application/json' })
+    res.end(JSON.stringify(rows[Math.floor(Math.random() * rows.length)]))
+  })
 }
 
 app.prepare().then(() => {
@@ -37,7 +37,7 @@ app.prepare().then(() => {
     const { pathname, query } = parsedUrl
 
     if (pathname === '/FindCatByPosition') {
-        FindCatByPosition(req, res)
+      FindCatByPosition(req, res)
     } else if (pathname === '/b') {
       app.render(req, res, '/a', query)
     } else {
