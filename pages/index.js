@@ -14,6 +14,13 @@ export default class extends React.Component {
                     margin: 0;
                     padding: 0;
                 }
+
+                html,
+                body,
+                body > div:first-child,
+                div#__next {
+                  height: 100%;
+                }
             `}</style>
             <CatFinder
                 requiredDelay={800}

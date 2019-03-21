@@ -6,15 +6,35 @@ import Status from './Status';
 
 export default ({ requiredDelay, isMobile }) => {
     const [state, dispatch] = useReducer(reducer, initialState)
+    const [nudge, setNudge] = useState(false)
     const [timeoutHandles, setTimeoutHandles] = useState({})
     const rootEl = useRef()
 
     const catStepsMessage = {
         [catSteps.PromptUserToMovePointer]: !isMobile ? "Move your cursor around in this box" : "Tap inside this box",
-        [catSteps.PromptUserToHoldStill]: "Hold still!",
+        [catSteps.PromptUserToHoldStill]: !isMobile ? "Finding pointer... Hold still!" : "Hold still!",
         [catSteps.RetrievingImage]: "Here it comes...",
         [catSteps.ShowingImage]: "Here it comes...",
         [catSteps.ImageLoaded]: "",
+    }
+
+    const nudgeMessage = !isMobile ? 'Keep it up! Move your cursor around' : 'Keep it up! Keep tapping!'
+
+    const setNudgeTimeout = () => {
+        setTimeoutHandles({
+            ...timeoutHandles,
+            nudgeTimeout: setTimeout(() => {
+                setNudge(true)
+            }, 3000)
+        })
+    }
+
+    const clearNudgeTimeout = () => {
+        clearTimeout(timeoutHandles.nudgeTimeout)
+        setTimeoutHandles({
+            ...timeoutHandles,
+            nudgeTimeout: undefined
+        })
     }
 
     const setWaitOnMouseTimeout = (position) => {
@@ -53,6 +73,8 @@ export default ({ requiredDelay, isMobile }) => {
 
     const dispatchActivity = (x, y) => {
         clearWaitOnMouseTimeout();
+        clearNudgeTimeout();
+        setNudge(false)
         const rect = rootEl.current.getBoundingClientRect();
         const xPos = x - rect.left; //x position within the element.
         const yPos = y - rect.top;  //y position within the element.
@@ -65,10 +87,14 @@ export default ({ requiredDelay, isMobile }) => {
 
     const onMouseLeave = () => {
         clearWaitOnMouseTimeout();
+        clearNudgeTimeout();
+        setNudge(false)
         dispatch({ type: actionTypes.mouseLeftBox })
     }
 
     const onImageLoad = () => {
+        clearNudgeTimeout();
+        setNudgeTimeout();
         dispatch({ type: actionTypes.catImageLoaded })
     }
 
@@ -97,14 +123,32 @@ export default ({ requiredDelay, isMobile }) => {
     return <Fragment>
         <style jsx>{`
             .catFinder {
-                width: 100vw;
-                height: 100vh;
+                width: 100%;
+                height: 100%;
                 padding: 2rem;
                 box-sizing: border-box;
                 display: flex;
                 align-items: center;
                 justify-content: center;
                 font-size: 3rem;
+            }
+            .nudge {
+                position: fixed;
+                bottom: 0;
+                font-size: 2rem;
+                right: 0;
+                padding: .5rem;
+                background: white;
+                animation-name: slideUp;
+                animation-duration: .5s;
+            }
+            @keyframes slideUp {
+                0% {
+                    transform: translateY(2rem)
+                }
+                100% {
+                    transform: translateY(0rem)
+                }
             }
         `}</style>
         <div
@@ -124,5 +168,8 @@ export default ({ requiredDelay, isMobile }) => {
             />}
         </div>
         <Status times={state.boops} />
+        {nudge && <span className="nudge">
+            {nudgeMessage}
+        </span>}
     </Fragment>;
 }

@@ -10,6 +10,7 @@ export default ({ times }) => {
             left: 0;
             color: black;
             background: white;
+            padding: .5rem;
         }
         `}</style>
         Author: <a href="https://le3.io" target="_blank" rel="noopener">le3.io</a> | {message}
