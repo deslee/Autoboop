@@ -33,7 +33,7 @@ export default class extends Document {
                     <meta property="og:image" content="https://autoboop.com/static/tina.jpg" />
                     <meta property="og:title" content="Autoboop" />
                     <meta property="og:type" content="website" />
-                    <meta property="og:description" content="Boop some cats..." />
+                    <meta property="og:description" content="Boop some cats!" />
                 </Head>
                 <body>
                     <Main />

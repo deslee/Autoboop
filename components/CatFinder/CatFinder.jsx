@@ -8,6 +8,7 @@ import Crosshairs from './Crosshairs';
 export default ({ requiredDelay, isMobile }) => {
     const [state, dispatch] = useReducer(reducer, initialState)
     const [nudge, setNudge] = useState(false)
+    const [permanentlyDismissNudge, setPermanentlyDismissNudge] = useState(false)
     const [timeoutHandles, setTimeoutHandles] = useState({})
     const rootEl = useRef()
 
@@ -23,7 +24,7 @@ export default ({ requiredDelay, isMobile }) => {
         try {
             window.gtag('event', 'onLeave', {
                 'event_category': 'boops',
-                'event_label': state.boops + 1,
+                'event_label': state.boops,
                 'transport_type': 'beacon'
             });
         } catch (err) {
@@ -163,6 +164,7 @@ export default ({ requiredDelay, isMobile }) => {
                 background: white;
                 animation-name: slideUp;
                 animation-duration: .5s;
+                cursor: pointer;
             }
             @keyframes slideUp {
                 0% {
@@ -190,7 +192,7 @@ export default ({ requiredDelay, isMobile }) => {
             />}
         </div>
         <Status times={state.boops} />
-        {nudge && <span className="nudge">
+        {permanentlyDismissNudge != true && nudge && <span className="nudge" onClick={() => {setNudge(false); setPermanentlyDismissNudge(true)}}>
             {nudgeMessage}
         </span>}
         { isMobile && state.position && state.step !== catSteps.ImageLoaded && <Crosshairs x={state.position.xPos} y={state.position.yPos} /> }
