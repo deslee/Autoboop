@@ -1,28 +1,31 @@
 {
-  "name": "catfinder",
+  "name": "autoboop",
   "version": "1.0.0",
   "description": "",
   "main": "FindCatByPosition.js",
+  "engines": {
+    "node": "12.x"
+  },
   "scripts": {
-    "dev": "node server.js",
+    "dev": "next dev",
     "build": "next build",
     "start": "NODE_ENV=production node server.js"
   },
   "repository": {
     "type": "git",
-    "url": "git+ssh://git@gitlab.com/deslee/catfinder.git"
+    "url": "git+ssh://git@gitlab.com/deslee/autoboop.git"
   },
   "author": "",
   "license": "ISC",
   "bugs": {
-    "url": "https://gitlab.com/deslee/catfinder/issues"
+    "url": "https://gitlab.com/deslee/autoboop/issues"
   },
-  "homepage": "https://gitlab.com/deslee/catfinder#readme",
+  "homepage": "https://gitlab.com/deslee/autoboop#readme",
   "dependencies": {
+    "better-sqlite3": "^5.4.3",
     "classnames": "^2.2.6",
-    "next": "^8.0.3",
+    "next": "^9.1.6",
     "react": "^16.8.3",
-    "react-dom": "^16.8.3",
-    "sqlite3": "^4.0.6"
+    "react-dom": "^16.8.3"
   }
 }

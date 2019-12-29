@@ -79,7 +79,7 @@ export default ({ requiredDelay, isMobile }) => {
     }
 
     const getCatForPosition = async (x, y) => {
-        const response = await fetch(`/FindCatByPosition?x=${x}&y=${y}`)
+        const response = await fetch(`/api/FindCatByPosition?x=${x}&y=${y}`)
         if (response.status === 200 && response.json) {
             const cat = await response.json()
             dispatch({ type: actionTypes.receivedCatAndDisplaying, cat })
