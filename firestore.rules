@@ -1,0 +1,11 @@
+rules_version = '2';
+service cloud.firestore {
+  match /databases/{database}/documents {
+  	match /cats/{catId} {
+    	allow read: if request.query.limit <= 15;
+    }
+    match /{document=**} {
+      allow read, write: if false;
+    }
+  }
+}
