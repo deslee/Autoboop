@@ -2,6 +2,7 @@ import * as firebase from 'firebase/app';
 import "firebase/analytics";
 import 'firebase/firestore';
 
+
 var firebaseConfig = {
   apiKey: "AIzaSyCNZW2Y3mDFp2ZD09Z5cf4ztC3_O9YuCuQ",
   authDomain: "autoboop-b0b1a.firebaseapp.com",

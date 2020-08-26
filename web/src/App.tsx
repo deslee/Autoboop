@@ -1,5 +1,6 @@
 import React, { useEffect, useCallback, useState } from 'react';
-import { CssBaseline, makeStyles, Typography, Dialog, DialogTitle, DialogContent, Link, IconButton } from '@material-ui/core'
+import { CssBaseline, Typography, Dialog, DialogTitle, DialogContent, Link, IconButton } from '@material-ui/core'
+import { makeStyles } from '@material-ui/core/styles'
 import useAutoboop, { Step } from './useAutoboop';
 import BoopEffect from './BoopEffect';
 import { analytics } from './firebase';
