@@ -1,10 +1,11 @@
-import React, { useEffect, useCallback, useState } from 'react';
+import React, { useEffect, useCallback, useState, useMemo } from 'react';
 import { CssBaseline, Typography, Dialog, DialogTitle, DialogContent, Link, IconButton } from '@material-ui/core'
 import { makeStyles } from '@material-ui/core/styles'
 import useAutoboop, { Step } from './useAutoboop';
 import BoopEffect from './BoopEffect';
 import { analytics } from './firebase';
 import CloseIcon from '@material-ui/icons/Close';
+import { calculateImageDimensions } from './calculateImageDimensions';
 
 const isMobile = (process as any).browser && 'ontouchstart' in document.documentElement
 
@@ -69,11 +70,13 @@ function App() {
     });
     setAboutDialog(true)
   }, [state.boops])
+
   const trackOutbound = useCallback((e: React.MouseEvent<HTMLAnchorElement, MouseEvent>) => {
     analytics.logEvent('outbound', {
-      url: (e.target as any).href
+      url: (e.target as any).href,
+      score: state.boops
     })
-  }, [])
+  }, [state.boops])
 
   useEffect(() => {
     console.debug(JSON.stringify(state))
@@ -93,54 +96,25 @@ function App() {
     }
   }, [onUnload])
 
-  const calculateImageDimensions = useCallback<(zoom?: number) => any>((zoom = 1) => {
+  const imageDimensions = useMemo(() => {
     if (!container.current || !state.cat) {
       return
     }
     const { width: catWidth, height: catHeight, x: catX, y: catY } = state.cat;
     const { width: containerWidth, height: containerHeight } = container.current.getBoundingClientRect()
 
-    // mouse position in pixels
-    const mouseX = containerWidth * state.position.x/100
-    const mouseY = containerHeight * state.position.y/100
+    return calculateImageDimensions({
+        catWidth, catHeight, catX, catY, containerWidth, containerHeight,
+        cursorX: state.position.x, cursorY: state.position.y,
+        zoom: 1, fileName: state.cat?.fileName || ''
+      })
+  }, [state.cat, state.position, container])
 
-    // image width, height in pixels
-    let imageWidth, imageHeight
-
-    if (containerWidth > containerHeight) {
-      // landscape
-      imageWidth = containerWidth * zoom
-      imageHeight = catHeight / catWidth * containerWidth * zoom
-    } else {
-      // portrait
-      imageWidth = catWidth / catHeight * containerHeight * zoom
-      imageHeight = containerHeight * zoom
-
+  useEffect(() => {
+    if (imageDimensions) {
+      analytics.logEvent('boop_cat', imageDimensions)
     }
-
-    // delta in pixels
-    const xDelta = mouseX - imageWidth*catX
-    const yDelta = mouseY - imageHeight*catY
-
-    const fillThreshold = .5
-    const shouldZoom = yDelta > fillThreshold || containerHeight - (imageHeight + yDelta) > fillThreshold ||
-      xDelta > fillThreshold || containerWidth - (imageWidth - xDelta) > fillThreshold
-
-    if (shouldZoom && zoom < 2) {
-      const dimensions: any = calculateImageDimensions(zoom * 1.1) 
-      return dimensions
-    }
-
-    return {
-      width: imageWidth,
-      height: imageHeight,
-      top: `${yDelta}px`,
-      left: `${xDelta}px`,
-      visibility: state.step === 'showingImage' || state.step === 'imageLoaded' ? 'visible' : 'hidden'
-    }
-  }, [container, state.cat, state.position, state.step])
-
-  const imageDimensions = calculateImageDimensions();
+  }, [imageDimensions])
 
   return (
     <div className={classes.root} ref={container}>
@@ -153,7 +127,7 @@ function App() {
         </DialogContent>
       </Dialog>
       {state.step === 'imageLoaded' && <BoopEffect {...state.position} />}
-      <img ref={image} alt="" style={{...imageDimensions, position: 'absolute'}} />
+      <img ref={image} alt="" style={{ ...imageDimensions, position: 'absolute', visibility: state.step === 'showingImage' || state.step === 'imageLoaded' ? 'visible' : 'hidden' }} />
       <div className={classes.prompt}>
         <Typography variant="h2">{catStepsMessage[state.step]}</Typography>
       </div>
@@ -171,7 +145,7 @@ function App() {
           width: '100%',
           zIndex: -1
         }}>
-          <div style={{ backdropFilter: 'blur(100px)', width: '100%', height: '100%' }}></div>
+          <div style={{ backdropFilter: 'blur(100px)', WebkitBackdropFilter: 'blur(100px)', width: '100%', height: '100%' }}></div>
         </div>}
     </div>
   );

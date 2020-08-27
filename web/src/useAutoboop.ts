@@ -1,6 +1,5 @@
 import { useRef, useReducer, useEffect, useCallback } from "react";
 import retrieveImage from "./retrieveImage";
-import { analytics } from "./firebase";
 
 export type Step = 'promptUserToMovePointer' |
     'promptUserToHoldStill' |
@@ -28,7 +27,7 @@ type Action =
     }
 
 type Cat = {
-    src: string,
+    fileName: string,
     x: number,
     y: number,
     width: number,
@@ -179,14 +178,17 @@ export default function useAutoboop<T extends HTMLElement>(requiredDelay: number
     useEffect(() => {
         if (state.step === 'retrievingImage') {
             retrieveImage(state.position.x, state.position.y).then((image) => {
+                if (!image) {
+                    console.error(`Failed to retrieve image for position ${JSON.stringify(state.position)}`);
+                }
                 dispatch({
                     type: 'receivedCatAndDisplaying',
                     cat: {
-                        src: `https://storage.googleapis.com/autoboop-cats/${image?.fileName}`,
-                        x: image?.x,
-                        y: image?.y,
-                        width: image?.width,
-                        height: image?.height
+                        fileName: image.fileName,
+                        x: image.x,
+                        y: image.y,
+                        width: image.width,
+                        height: image.height
                     }
                 })
             })
@@ -204,15 +206,14 @@ export default function useAutoboop<T extends HTMLElement>(requiredDelay: number
                     type: 'catImageLoaded'
                 })
                 localStorage.setItem('boops', String(state.boops + 1))
-                if (state.cat) {
-                    console.log('logging event')
-                    analytics.logEvent('boop_cat', {
-                        cat_id: state.cat.src || ''
-                    })
-                }
             }
-            current.addEventListener('load', load)
-            current.src = state.cat?.src || ''
+            if (state.cat) {
+                current.src = `https://storage.googleapis.com/autoboop-cats/${state.cat.fileName}`
+                current.addEventListener('load', load)
+            }
+            else {
+                console.error("Unexpected state - no cat")
+            }
             return () => {
                 current.removeEventListener('load', load)
             }
